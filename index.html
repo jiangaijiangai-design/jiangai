@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff8e8">
+  <title>What's This? — 第一单元互动乐园</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
+  <header class="topbar">
+    <button class="brand" data-screen="home" aria-label="返回首页">
+      <span class="brand-mark">W?</span><span><b>What's This?</b><small>第一单元互动乐园</small></span>
+    </button>
+    <div class="top-actions">
+      <div class="star-counter" aria-label="获得的星星"><span>★</span><b id="totalStars">0</b></div>
+      <button id="soundToggle" class="round-btn" aria-label="打开或关闭声音">🔊</button>
+      <button id="resetBtn" class="text-btn">重新开始</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="screen active">
+      <div class="hero paper-card">
+        <div class="hero-copy">
+          <span class="eyebrow">Family & Friends 1 · Unit 1</span>
+          <h1>Ready, little explorer?</h1>
+          <p>和 Foxy 一起认识学习用品、练习 <b>What’s this?</b>、听懂课堂指令，再闯过字母声音关！</p>
+          <div class="hero-actions">
+            <button class="primary-btn" data-screen="lesson">▶ 先看动画微课</button>
+            <button class="secondary-btn" data-screen="words">直接开始闯关 →</button>
+          </div>
+          <div class="progress-wrap">
+            <div class="progress-label"><span>本单元进度</span><b id="progressText">0 / 6</b></div>
+            <div class="progress-track"><span id="progressBar"></span></div>
+          </div>
+        </div>
+        <div class="hero-art">
+          <span class="spark s1">✦</span><span class="spark s2">★</span><span class="spark s3">✦</span>
+          <div class="speech-bubble">Hi! I’m Foxy.<br><b>Let’s learn!</b></div>
+          <img src="foxy.png" alt="拿着铅笔、背着书包的狐狸学习伙伴">
+        </div>
+      </div>
+
+      <div class="section-heading"><div><span>LEARNING PATH</span><h2>六站深度闯关</h2></div><p>每关最多 3 颗星，完成后会自动保存。</p></div>
+      <div class="path-grid" id="pathGrid">
+        <button class="path-card coral" data-screen="lesson"><span class="path-num">01</span><span class="path-icon">🎬</span><h3>动画微课</h3><p>完整知识地图与跟读</p><span class="card-stars" data-stars="lesson">☆☆☆</span></button>
+        <button class="path-card yellow" data-screen="words"><span class="path-num">02</span><span class="path-icon">🎒</span><h3>词汇实验室</h3><p>11 个学习用品听说认读</p><span class="card-stars" data-stars="words">☆☆☆</span></button>
+        <button class="path-card blue" data-screen="question"><span class="path-num">03</span><span class="path-icon">❓</span><h3>神奇问答机</h3><p>What’s this? It’s a…</p><span class="card-stars" data-stars="question">☆☆☆</span></button>
+        <button class="path-card green" data-screen="commands"><span class="path-num">04</span><span class="path-icon">🚪</span><h3>动作反应赛</h3><p>Open / Close 课堂指令</p><span class="card-stars" data-stars="commands">☆☆☆</span></button>
+        <button class="path-card purple" data-screen="phonics"><span class="path-num">05</span><span class="path-icon">🔤</span><h3>声音侦探</h3><p>Aa–Dd 与首字母音</p><span class="card-stars" data-stars="phonics">☆☆☆</span></button>
+        <button class="path-card navy" data-screen="final"><span class="path-num">06</span><span class="path-icon">🏆</span><h3>终极挑战</h3><p>综合听说读写大复习</p><span class="card-stars" data-stars="final">☆☆☆</span></button>
+      </div>
+      <div class="parent-note"><span>💡</span><p><b>陪学建议：</b>每次学习 15–20 分钟。先听再说，答错时让孩子点击小喇叭重新听，不急着告诉答案。</p></div>
+    </section>
+
+    <section id="lesson" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 学习地图</button><div><span>STATION 01</span><h2>动画微课</h2></div><div class="mini-stars" data-stars="lesson">☆☆☆</div></div>
+      <div class="lesson-layout">
+        <div class="video-stage paper-card" id="videoStage">
+          <div class="video-badge">原创互动微课 · 约 3 分钟</div>
+          <div class="video-scene" id="videoScene"></div>
+          <div class="video-controls">
+            <button id="videoPlay" class="primary-btn">▶ 播放</button>
+            <button id="videoPrev" class="round-btn">←</button>
+            <div class="video-dots" id="videoDots"></div>
+            <button id="videoNext" class="round-btn">→</button>
+          </div>
+        </div>
+        <aside class="lesson-notes paper-card">
+          <span class="eyebrow">本章知识地图</span>
+          <h3>学完会这 5 件事</h3>
+          <ol>
+            <li><b>说物品：</b>pen, pencil, rubber, ruler, book…</li>
+            <li><b>问与答：</b>What’s this? — It’s a…</li>
+            <li><b>听指令：</b>Open / Close the…</li>
+            <li><b>拼读：</b>Aa, Bb, Cc, Dd</li>
+            <li><b>介绍：</b>This is my school bag.</li>
+          </ol>
+          <button id="lessonDone" class="secondary-btn full">我看懂了，领取星星 ★</button>
+        </aside>
+      </div>
+    </section>
+
+    <section id="words" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 学习地图</button><div><span>STATION 02</span><h2>词汇实验室</h2></div><div class="mini-stars" data-stars="words">☆☆☆</div></div>
+      <div class="mode-tabs"><button class="active" data-wordmode="learn">看图学习</button><button data-wordmode="quiz">听音找词</button></div>
+      <div id="wordLearn" class="word-learn">
+        <div class="flash-card paper-card" id="flashCard">
+          <button id="wordSpeak" class="listen-btn">🔊</button>
+          <div class="object-art" id="wordEmoji">✏️</div>
+          <div class="word-en" id="wordEnglish">pencil</div>
+          <div class="word-phonetic" id="wordPhonetic">/ˈpensl/</div>
+          <div class="word-cn" id="wordChinese">铅笔</div>
+          <div class="word-example" id="wordExample">It’s a pencil.</div>
+        </div>
+        <div class="flash-nav"><button id="wordPrev" class="secondary-btn">← 上一个</button><b id="wordCount">1 / 11</b><button id="wordNext" class="primary-btn">下一个 →</button></div>
+      </div>
+      <div id="wordQuiz" class="quiz-panel paper-card hidden">
+        <div class="quiz-top"><span class="quiz-kicker">听一听，点选正确图片</span><span id="wordQuizScore">0 / 5</span></div>
+        <button id="quizSpeak" class="giant-listen">🔊<small>播放单词</small></button>
+        <div class="choice-grid picture-choices" id="wordChoices"></div>
+        <div class="feedback" id="wordFeedback" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="question" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 学习地图</button><div><span>STATION 03</span><h2>神奇问答机</h2></div><div class="mini-stars" data-stars="question">☆☆☆</div></div>
+      <div class="question-layout">
+        <div class="grammar-card paper-card">
+          <span class="eyebrow">MAGIC SENTENCE</span>
+          <div class="talk-row"><span class="avatar kid">?</span><div class="bubble left">What’s this?</div></div>
+          <div class="talk-row reverse"><span class="avatar fox">🦊</span><div class="bubble right">It’s <u>a</u> pencil.</div></div>
+          <div class="grammar-tip"><b>What’s</b> = What is　　<b>It’s</b> = It is</div>
+          <button class="listen-line" data-say="What's this? It's a pencil.">🔊 听完整对话</button>
+        </div>
+        <div class="quiz-panel paper-card">
+          <div class="quiz-top"><span class="quiz-kicker">选出正确回答</span><span id="questionScore">第 1 / 6 题</span></div>
+          <div class="mystery-object" id="questionEmoji">📏</div>
+          <h3>What’s this?</h3>
+          <div class="choice-grid" id="questionChoices"></div>
+          <div class="feedback" id="questionFeedback" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="commands" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 学习地图</button><div><span>STATION 04</span><h2>动作反应赛</h2></div><div class="mini-stars" data-stars="commands">☆☆☆</div></div>
+      <div class="command-game paper-card">
+        <div class="quiz-top"><span class="quiz-kicker">听指令，做动作</span><span id="commandScore">0 / 6</span></div>
+        <div class="teacher-command"><img src="foxy.png" alt="Foxy"><div><small>Foxy says…</small><b id="commandText">Open the book.</b><button id="commandSpeak">🔊 再听一次</button></div></div>
+        <div class="action-scene">
+          <div class="interactive-object book-object closed" id="bookObject" role="img" aria-label="书"><span class="book-left"></span><span class="book-right"></span><i>ABC</i></div>
+          <div class="interactive-object door-object closed" id="doorObject" role="img" aria-label="门"><span></span><i></i></div>
+          <div class="interactive-object window-object closed" id="windowObject" role="img" aria-label="窗户"><span></span><i>☀</i></div>
+        </div>
+        <div class="action-buttons" id="actionButtons"></div>
+        <div class="feedback" id="commandFeedback" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="phonics" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 学习地图</button><div><span>STATION 05</span><h2>声音侦探</h2></div><div class="mini-stars" data-stars="phonics">☆☆☆</div></div>
+      <div class="phonic-strip">
+        <button class="phonic-card a" data-say="A. apple. /æ/."><b>Aa</b><span>🍎</span><small>apple · /æ/</small></button>
+        <button class="phonic-card b" data-say="B. bird. /b/."><b>Bb</b><span>🐦</span><small>bird · /b/</small></button>
+        <button class="phonic-card c" data-say="C. cat. /k/."><b>Cc</b><span>🐱</span><small>cat · /k/</small></button>
+        <button class="phonic-card d" data-say="D. dog. /d/."><b>Dd</b><span>🐶</span><small>dog · /d/</small></button>
+      </div>
+      <div class="sorting-game paper-card">
+        <div class="quiz-top"><span class="quiz-kicker">哪个单词以这个声音开头？</span><span id="phonicScore">0 / 6</span></div>
+        <div class="sound-prompt"><button id="phonicSpeak">🔊</button><b id="phonicLetter">Bb</b><span id="phonicSound">/b/</span></div>
+        <div class="choice-grid picture-choices" id="phonicChoices"></div>
+        <div class="feedback" id="phonicFeedback" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="final" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 学习地图</button><div><span>STATION 06</span><h2>终极挑战</h2></div><div class="mini-stars" data-stars="final">☆☆☆</div></div>
+      <div class="final-card paper-card" id="finalCard">
+        <div class="final-progress"><span id="finalRound">1 / 10</span><div><i id="finalBar"></i></div></div>
+        <span class="eyebrow" id="finalType">词汇挑战</span>
+        <div id="finalPrompt" class="final-prompt"></div>
+        <div id="finalChoices" class="choice-grid"></div>
+        <div class="feedback" id="finalFeedback" aria-live="polite"></div>
+      </div>
+      <div class="certificate paper-card hidden" id="certificate">
+        <img src="foxy.png" alt="Foxy">
+        <span class="eyebrow">UNIT 1 COMPLETED</span>
+        <h2>🏆 小小英语探险家</h2>
+        <p>你已经掌握了 “What’s this?” 单元的词汇、句型、指令和自然拼读！</p>
+        <div class="big-score" id="finalResult">10 / 10</div>
+        <button class="primary-btn" data-screen="home">带着星星回地图</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+  <footer>原创学习活动 · 基于 Unit 1 知识点重新设计 · 学习进度仅保存在本机</footer>
+  <script src="app.js"></script>
+</body>
+</html>
