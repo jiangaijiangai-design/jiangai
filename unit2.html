@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#7aaea5">
+  <title>Playtime! — Unit 2 玩具王国</title>
+  <link rel="stylesheet" href="unit2.css">
+</head>
+<body>
+  <div class="confetti-bg" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="unit2.html"><span class="brand-die">2</span><span><b>Playtime!</b><small>玩具王国大冒险</small></span></a>
+    <nav class="top-actions" aria-label="章节与声音控制">
+      <a class="unit-link" href="index.html">← Unit 1</a>
+      <div class="star-counter"><span>★</span><b id="totalStars">0</b></div>
+      <button id="soundToggle" class="icon-btn" aria-label="打开或关闭声音">🔊</button>
+      <button id="voiceStudioBtn" class="voice-btn" aria-label="设置播报速度和家长声音">🎙️ <span>声音设置</span></button>
+      <button id="resetBtn" class="text-btn">重置进度</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="screen active">
+      <div class="hero toy-panel">
+        <div class="hero-copy">
+          <span class="eyebrow">FAMILY & FRIENDS 1 · UNIT 2</span>
+          <h1>Playtime!</h1>
+          <p class="hero-lead">Elsa，欢迎来到玩具王国！认识玩具、找出谁的玩具、设计彩色玩具，再用英语说出你最喜欢的玩具。</p>
+          <div class="hero-actions">
+            <button class="primary-btn" data-screen="lesson">▶ 先学知识地图</button>
+            <button class="secondary-btn" data-screen="toys">开始第一关 →</button>
+          </div>
+          <div class="progress-box">
+            <div><span>王冠进度</span><b id="progressText">0 / 7</b></div>
+            <div class="progress-track"><i id="progressBar"></i></div>
+          </div>
+        </div>
+        <div class="hero-world">
+          <span class="toy-float t1">🪁</span><span class="toy-float t2">🧸</span><span class="toy-float t3">🚂</span>
+          <div class="portrait-wrap">
+            <div class="hero-crown">👑</div>
+            <img src="elsa-cartoon.jpg" alt="游戏主角卡通 Elsa">
+          </div>
+          <div class="helper-card"><span class="helper-mini">✦</span><p><b>嗨，Elsa！</b><br>我是星星精灵 Lumi，答对后我来为你戴皇冠！</p></div>
+        </div>
+      </div>
+
+      <div class="section-heading"><div><span>THE CROWN QUEST</span><h2>七站王冠闯关</h2></div><p>每一站都在游戏中学习，答对立即获得语音鼓励。</p></div>
+      <div class="path-grid">
+        <button class="path-card purple" data-screen="lesson"><span class="num">01</span><span class="icon">🗺️</span><h3>知识地图</h3><p>先懂再玩，6 幕动画讲清全部重点</p><span class="stars" data-stars="lesson">☆☆☆</span></button>
+        <button class="path-card coral" data-screen="toys"><span class="num">02</span><span class="icon">🧸</span><h3>玩具收集站</h3><p>10 个玩具词汇：听、看、说、认</p><span class="stars" data-stars="toys">☆☆☆</span></button>
+        <button class="path-card blue" data-screen="owner"><span class="num">03</span><span class="icon">🔍</span><h3>玩具小侦探</h3><p>my / your 与 Is this your…?</p><span class="stars" data-stars="owner">☆☆☆</span></button>
+        <button class="path-card yellow" data-screen="designer"><span class="num">04</span><span class="icon">🎨</span><h3>玩具设计师</h3><p>大小 + 颜色 + 玩具的正确顺序</p><span class="stars" data-stars="designer">☆☆☆</span></button>
+        <button class="path-card green" data-screen="phonics"><span class="num">05</span><span class="icon">🔤</span><h3>声音魔法屋</h3><p>Ee–Hh 与 egg、fig、goat、hat</p><span class="stars" data-stars="phonics">☆☆☆</span></button>
+        <button class="path-card pink" data-screen="favourite"><span class="num">06</span><span class="icon">💖</span><h3>最爱分享会</h3><p>询问、阅读并介绍最喜欢的玩具</p><span class="stars" data-stars="favourite">☆☆☆</span></button>
+        <button class="path-card navy" data-screen="final"><span class="num">07</span><span class="icon">🏰</span><h3>王冠总决赛</h3><p>12 题综合听说读写挑战</p><span class="stars" data-stars="final">☆☆☆</span></button>
+      </div>
+      <div class="parent-note"><span>💡</span><p><b>陪玩建议：</b>每次 15 分钟，先听再选，答错时让孩子重复听音并自己改正。语音鼓励会帮助孩子把错误当成下一次尝试。</p></div>
+    </section>
+
+    <section id="lesson" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 王国地图</button><div><span>STATION 01</span><h2>知识地图</h2></div><div class="mini-stars" data-stars="lesson">☆☆☆</div></div>
+      <div class="lesson-layout">
+        <div class="micro-stage toy-panel">
+          <div class="micro-top"><span>原创动画微课 · 约 3 分钟</span><b id="lessonCount">1 / 6</b></div>
+          <div class="micro-scene" id="lessonScene"></div>
+          <div class="micro-controls"><button id="lessonPlay" class="primary-btn">▶ 自动播放</button><button id="lessonPrev" class="icon-btn">←</button><div id="lessonDots" class="dots"></div><button id="lessonNext" class="icon-btn">→</button></div>
+        </div>
+        <aside class="knowledge-card toy-panel">
+          <span class="eyebrow">UNIT 2 CHECKLIST</span>
+          <h3>这一单元要掌握</h3>
+          <ul>
+            <li>10 个常见玩具名称</li>
+            <li><b>my</b> 我的 / <b>your</b> 你的</li>
+            <li><b>Is this your…?</b> 的肯定与否定回答</li>
+            <li><b>a big red bike</b> 描述顺序</li>
+            <li>Ee、Ff、Gg、Hh 的字母和首音</li>
+            <li>谈论最喜欢的玩具与颜色</li>
+          </ul>
+          <button id="lessonDone" class="secondary-btn full">我准备好了！领取皇冠星 ★</button>
+        </aside>
+      </div>
+    </section>
+
+    <section id="toys" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 王国地图</button><div><span>STATION 02</span><h2>玩具收集站</h2></div><div class="mini-stars" data-stars="toys">☆☆☆</div></div>
+      <div class="mode-tabs"><button class="active" data-toymode="learn">学习卡片</button><button data-toymode="quiz">听音收集</button></div>
+      <div id="toyLearn" class="toy-learn">
+        <div class="flash-card toy-panel">
+          <button id="toySpeak" class="speaker">🔊</button>
+          <div class="toy-emoji" id="toyEmoji">🧸</div><h3 id="toyEnglish">teddy</h3><span id="toyPhonetic">/ˈtedi/</span><p id="toyChinese">泰迪熊</p><div class="example" id="toyExample">This is my teddy.</div>
+        </div>
+        <div class="flash-nav"><button id="toyPrev" class="secondary-btn">← 上一个</button><b id="toyCount">1 / 10</b><button id="toyNext" class="primary-btn">下一个 →</button></div>
+      </div>
+      <div id="toyQuiz" class="quiz-card toy-panel hidden">
+        <div class="quiz-meta"><span>听单词，收集正确玩具</span><b id="toyQuizCount">1 / 6</b></div>
+        <button id="toyQuizSpeak" class="big-speaker">🔊<small>再听一次</small></button>
+        <div id="toyChoices" class="picture-grid"></div>
+      </div>
+    </section>
+
+    <section id="owner" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 王国地图</button><div><span>STATION 03</span><h2>玩具小侦探</h2></div><div class="mini-stars" data-stars="owner">☆☆☆</div></div>
+      <div class="grammar-banner toy-panel"><div><span class="tag mine">MY</span><b>my toy</b><small>我的玩具</small></div><i>↔</i><div><span class="tag yours">YOUR</span><b>your toy</b><small>你的玩具</small></div></div>
+      <div class="quiz-card toy-panel">
+        <div class="quiz-meta"><span>看看玩具标签，选出正确回答</span><b id="ownerCount">1 / 7</b></div>
+        <div class="owner-scene"><div class="person-chip"><img src="elsa-cartoon.jpg" alt="卡通 Elsa"><b>Elsa</b></div><div class="owner-toy"><span id="ownerEmoji">🧸</span><small id="ownerTag">ELSA</small></div><div class="person-chip friend"><div>👧🏻</div><b>Mia</b></div></div>
+        <h3 id="ownerQuestion">Is this your teddy?</h3>
+        <button class="listen-line" id="ownerSpeak">🔊 听问题</button>
+        <div id="ownerChoices" class="answer-grid"></div>
+        <div class="grammar-note"><b>Yes, it is.</b> 是的。　 <b>No, it isn’t.</b> 不是。　 <b>This is my…</b> 这是我的……</div>
+      </div>
+    </section>
+
+    <section id="designer" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 王国地图</button><div><span>STATION 04</span><h2>玩具设计师</h2></div><div class="mini-stars" data-stars="designer">☆☆☆</div></div>
+      <div class="order-formula toy-panel"><span class="pill size">大小<br><b>big</b></span><i>+</i><span class="pill colour">颜色<br><b>red</b></span><i>+</i><span class="pill noun">玩具<br><b>bike</b></span><i>=</i><strong>a big red bike</strong></div>
+      <div class="quiz-card toy-panel">
+        <div class="quiz-meta"><span>为玩具选出最准确的描述</span><b id="designerCount">1 / 7</b></div>
+        <div class="design-stage" id="designStage"><span id="designEmoji">🚲</span></div>
+        <h3 id="designPrompt">Which one is it?</h3>
+        <div id="designerChoices" class="answer-grid"></div>
+      </div>
+    </section>
+
+    <section id="phonics" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 王国地图</button><div><span>STATION 05</span><h2>声音魔法屋</h2></div><div class="mini-stars" data-stars="phonics">☆☆☆</div></div>
+      <div class="phonic-strip">
+        <button data-say="E. egg. /e/." class="phonic e"><b>Ee</b><span>🥚</span><small>egg · /e/</small></button>
+        <button data-say="F. fig. /f/." class="phonic f"><b>Ff</b><span>🟣</span><small>fig · /f/</small></button>
+        <button data-say="G. goat. /g/." class="phonic g"><b>Gg</b><span>🐐</span><small>goat · /g/</small></button>
+        <button data-say="H. hat. /h/." class="phonic h"><b>Hh</b><span>🎩</span><small>hat · /h/</small></button>
+      </div>
+      <div class="quiz-card toy-panel">
+        <div class="quiz-meta"><span>听首音，找出对应单词</span><b id="phonicCount">1 / 7</b></div>
+        <div class="sound-orb"><button id="phonicSpeak">🔊</button><b id="phonicLetter">Ee</b><span id="phonicSound">/e/</span></div>
+        <div id="phonicChoices" class="picture-grid"></div>
+      </div>
+    </section>
+
+    <section id="favourite" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 王国地图</button><div><span>STATION 06</span><h2>最爱分享会</h2></div><div class="mini-stars" data-stars="favourite">☆☆☆</div></div>
+      <div class="favourite-layout">
+        <div class="reading-card toy-panel"><span class="eyebrow">READ & LISTEN</span><div class="elsa-mini"><img src="elsa-cartoon.jpg" alt="卡通 Elsa"><span>💬</span></div><blockquote>“This is my favourite toy. It’s a doll. It’s lovely!”</blockquote><button data-say="This is my favourite toy. It's a doll. It's lovely!" class="listen-line">🔊 听 Elsa 分享</button></div>
+        <div class="quiz-card toy-panel">
+          <div class="quiz-meta"><span>理解、询问与表达</span><b id="favouriteCount">1 / 6</b></div>
+          <div id="favouritePrompt" class="favourite-prompt"></div>
+          <div id="favouriteChoices" class="answer-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="final" class="screen game-screen">
+      <div class="screen-head"><button class="back-btn" data-screen="home">← 王国地图</button><div><span>STATION 07</span><h2>王冠总决赛</h2></div><div class="mini-stars" data-stars="final">☆☆☆</div></div>
+      <div id="finalGame" class="final-card toy-panel">
+        <div class="final-progress"><span id="finalCount">1 / 12</span><div><i id="finalBar"></i></div></div>
+        <span class="eyebrow" id="finalType">玩具词汇</span><div id="finalPrompt" class="final-prompt"></div><div id="finalChoices" class="answer-grid"></div>
+      </div>
+      <div id="certificate" class="certificate toy-panel hidden">
+        <div class="cert-photo"><div class="cert-crown">👑</div><img src="elsa-cartoon.jpg" alt="卡通 Elsa"></div>
+        <span class="eyebrow">UNIT 2 COMPLETED</span><h2>玩具王国小女王</h2><p>Elsa 已经掌握 Unit 2 的玩具词汇、物品归属、玩具描述、自然拼读和最爱表达！</p><div class="big-score" id="finalScore">12 / 12</div><button class="primary-btn" data-screen="home">戴着皇冠回地图</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="feedback" class="feedback-overlay" role="dialog" aria-live="assertive" aria-modal="true">
+    <div class="feedback-card">
+      <div class="reward-stage"><div class="lumi"><span>✦</span><i></i></div><div class="reward-crown">👑</div><img src="elsa-cartoon.jpg" alt="卡通 Elsa"></div>
+      <h2 id="feedbackTitle">哎呀，你太棒了！</h2><p id="feedbackText">Great job!</p><button id="feedbackBtn" class="primary-btn">继续闯关 →</button>
+    </div>
+  </div>
+  <div id="voiceStudio" class="voice-studio-overlay" role="dialog" aria-modal="true" aria-labelledby="voiceStudioTitle">
+    <div class="voice-studio-card">
+      <button id="voiceStudioClose" class="voice-close" aria-label="关闭声音设置">×</button>
+      <span class="eyebrow">PARENT VOICE STUDIO</span>
+      <h2 id="voiceStudioTitle">声音小屋</h2>
+      <p class="voice-intro">系统英文已调整为儿童慢速。你也可以为常用句子录下自己的声音，录音只保存在当前浏览器里。</p>
+
+      <div class="voice-setting-row">
+        <label for="speechRate">系统英文速度 <b id="speechRateValue">0.60×</b></label>
+        <input id="speechRate" type="range" min="0.45" max="0.85" step="0.05" value="0.60">
+        <div class="rate-labels"><span>更慢</span><span>儿童慢速</span><span>较快</span></div>
+      </div>
+
+      <label class="voice-toggle"><input id="customVoiceEnabled" type="checkbox" checked><span>有家长录音时，优先播放家长声音</span></label>
+
+      <div class="voice-recorder">
+        <label for="voicePhraseSelect">选择要录制的英文</label>
+        <select id="voicePhraseSelect"></select>
+        <div class="voice-phrase-preview">
+          <small>本次录音内容</small>
+          <p id="voicePhraseText">Car.</p>
+        </div>
+        <div class="voice-actions">
+          <button id="voicePreview" class="secondary-btn">🔊 试听</button>
+          <button id="voiceRecord" class="primary-btn">● 开始录音</button>
+          <button id="voiceStop" class="secondary-btn" disabled>■ 停止并保存</button>
+        </div>
+        <label class="voice-upload">或上传这一句的音频
+          <input id="voiceUpload" type="file" accept="audio/*">
+        </label>
+        <div class="voice-status-line"><span id="voiceStatus">尚未录制这句话</span><button id="voiceDelete" class="text-btn" disabled>删除录音</button></div>
+      </div>
+
+      <div class="privacy-note">🔒 不会把录音上传到服务器；每句话可单独录制或上传。未录制的内容会自动使用儿童慢速系统音。</div>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status"></div>
+  <footer>原创学习活动 · 根据 Unit 2 知识目标重新设计 · 学习进度仅保存在本机</footer>
+  <script src="unit2.js"></script>
+</body>
+</html>
