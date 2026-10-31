@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#91b7ad">
+  <title>This is my nose! — Unit 3 身体探险队</title>
+  <link rel="stylesheet" href="unit3.css">
+</head>
+<body>
+  <div class="paper-dots" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="unit3.html"><span class="unit-badge">3</span><span><b>This is my nose!</b><small>身体探险队</small></span></a>
+    <nav>
+      <a href="unit2.html">← Unit 2</a>
+      <span class="star-box">★ <b id="totalStars">0</b></span>
+      <button id="soundToggle" class="round-btn" aria-label="打开或关闭声音">🔊</button>
+      <button id="resetBtn" class="link-btn">重置</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="screen active">
+      <div class="hero panel">
+        <div class="hero-copy">
+          <span class="eyebrow">FAMILY & FRIENDS 1 · UNIT 3</span>
+          <h1>This is<br>my nose!</h1>
+          <p>老师来之前，和 Elsa 完成身体探险：听懂身体部位、分清一个和多个，再破解 Ii–Ll 的声音密码。</p>
+          <div class="hero-actions">
+            <button class="primary" data-screen="lesson">先学 3 分钟</button>
+            <button class="secondary" data-screen="vocab">直接开始闯关 →</button>
+          </div>
+          <div class="progress"><div><span>复习进度</span><b id="progressText">0 / 6</b></div><div><i id="progressBar"></i></div></div>
+        </div>
+        <div class="hero-art">
+          <span class="float-label f1">eyes</span><span class="float-label f2">nose</span><span class="float-label f3">hands</span>
+          <div class="portrait"><span class="crown">👑</span><img src="elsa-cartoon.jpg" alt="卡通 Elsa"></div>
+          <div class="speech"><b>Ready?</b><br>Point to your nose!</div>
+        </div>
+      </div>
+
+      <div class="section-title"><div><span>TEACHER-READY QUEST</span><h2>六站快速复习</h2></div><p>每关约 2 分钟，全部完成就能自信上课。</p></div>
+      <div class="station-grid">
+        <button class="station mint" data-screen="lesson"><span>01</span><i>🗺️</i><h3>知识地图</h3><p>词汇、句型、首音一次看懂</p><b data-stars="lesson">☆☆☆</b></button>
+        <button class="station peach" data-screen="vocab"><span>02</span><i>👂</i><h3>听音找身体</h3><p>8 个身体部位，听懂再选择</p><b data-stars="vocab">☆☆☆</b></button>
+        <button class="station sky" data-screen="grammar"><span>03</span><i>☝️</i><h3>一个还是多个</h3><p>This is… / These are…</p><b data-stars="grammar">☆☆☆</b></button>
+        <button class="station lemon" data-screen="action"><span>04</span><i>🕺</i><h3>动作指令站</h3><p>听英语，做出正确动作</p><b data-stars="action">☆☆☆</b></button>
+        <button class="station lilac" data-screen="phonics"><span>05</span><i>🔤</i><h3>声音密码</h3><p>Ii · Jj · Kk · Ll</p><b data-stars="phonics">☆☆☆</b></button>
+        <button class="station coral" data-screen="final"><span>06</span><i>🏆</i><h3>老师模拟问答</h3><p>12 题综合挑战与开口练习</p><b data-stars="final">☆☆☆</b></button>
+      </div>
+      <div class="quick-tip"><span>⚡</span><p><b>时间很紧？</b>先完成第 2、3、6 站，重点练习 <strong>This is my nose.</strong> 和 <strong>These are my eyes.</strong></p></div>
+    </section>
+
+    <section id="lesson" class="screen game-screen">
+      <div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 01</span><h2>知识地图</h2></div><b data-stars="lesson">☆☆☆</b></div>
+      <div class="lesson-wrap">
+        <div class="lesson-stage panel"><div class="lesson-top"><span>儿童慢速微课</span><b id="lessonCount">1 / 4</b></div><div id="lessonScene"></div><div class="lesson-controls"><button id="lessonPrev" class="small-btn">←</button><button id="lessonSpeak" class="primary">🔊 听这一页</button><button id="lessonNext" class="small-btn">→</button></div></div>
+        <aside class="checklist panel"><span class="eyebrow">TODAY'S CHECKLIST</span><h3>上课前要会</h3><ul><li>说出 8 个身体部位</li><li>一个：<b>This is my…</b></li><li>多个：<b>These are my…</b></li><li>听懂 <b>Touch / Point to…</b></li><li>Ii、Jj、Kk、Ll 的首音</li></ul><button id="lessonDone" class="secondary full">我记住了，领取星星 ★</button></aside>
+      </div>
+    </section>
+
+    <section id="vocab" class="screen game-screen">
+      <div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 02</span><h2>听音找身体</h2></div><b data-stars="vocab">☆☆☆</b></div>
+      <div class="quiz panel"><div class="quiz-top"><span>听单词，点击正确的身体部位</span><b id="vocabCount">1 / 8</b></div><button id="vocabSpeak" class="listen-orb">🔊<small>再听一次</small></button><div id="vocabChoices" class="body-grid"></div></div>
+    </section>
+
+    <section id="grammar" class="screen game-screen">
+      <div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 03</span><h2>一个还是多个</h2></div><b data-stars="grammar">☆☆☆</b></div>
+      <div class="rule panel"><div><span>1 个</span><b>This is my nose.</b><small>this + is</small></div><i>↔</i><div><span>2 个或更多</span><b>These are my eyes.</b><small>these + are</small></div></div>
+      <div class="quiz panel"><div class="quiz-top"><span>看图，选择完整的正确句子</span><b id="grammarCount">1 / 8</b></div><div id="grammarVisual" class="grammar-visual"></div><div id="grammarChoices" class="answer-grid"></div></div>
+    </section>
+
+    <section id="action" class="screen game-screen">
+      <div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 04</span><h2>动作指令站</h2></div><b data-stars="action">☆☆☆</b></div>
+      <div class="action-card panel"><span class="eyebrow">LISTEN · MOVE · CHOOSE</span><div class="action-figure">🧍‍♀️</div><h3 id="actionPrompt">Touch your nose.</h3><p>先真的做动作，再点击你碰到的部位。</p><button id="actionSpeak" class="primary">🔊 听指令</button><div id="actionChoices" class="chip-grid"></div><div class="rounds" id="actionCount">1 / 6</div></div>
+    </section>
+
+    <section id="phonics" class="screen game-screen">
+      <div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 05</span><h2>声音密码</h2></div><b data-stars="phonics">☆☆☆</b></div>
+      <div class="phonics-strip"><button data-say="I. ink. /i/." class="p-i"><b>Ii</b><span>🖋️</span><small>ink</small></button><button data-say="J. jam. /j/." class="p-j"><b>Jj</b><span>🍓</span><small>jam</small></button><button data-say="K. kite. /k/." class="p-k"><b>Kk</b><span>🪁</span><small>kite</small></button><button data-say="L. lion. /l/." class="p-l"><b>Ll</b><span>🦁</span><small>lion</small></button></div>
+      <div class="quiz panel"><div class="quiz-top"><span>听首音，找到正确单词</span><b id="phonicsCount">1 / 8</b></div><button id="phonicsSpeak" class="sound-orb"><span id="phonicLetter">I</span><small id="phonicSound">/i/</small>🔊</button><div id="phonicsChoices" class="body-grid"></div></div>
+    </section>
+
+    <section id="final" class="screen game-screen">
+      <div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 06</span><h2>老师模拟问答</h2></div><b data-stars="final">☆☆☆</b></div>
+      <div id="finalGame" class="final panel"><div class="final-progress"><span id="finalCount">1 / 12</span><div><i id="finalBar"></i></div></div><span id="finalType" class="eyebrow">BODY WORDS</span><div id="finalPrompt" class="final-prompt"></div><div id="finalChoices" class="answer-grid"></div></div>
+      <div id="certificate" class="certificate panel hidden"><span class="big-crown">👑</span><img src="elsa-cartoon.jpg" alt="卡通 Elsa"><span class="eyebrow">READY FOR CLASS</span><h2>身体探险小达人</h2><p>你已经复习了身体词汇、This is / These are 和 Ii–Ll。老师提问时，慢慢说、指一指，你一定可以！</p><b id="finalScore">12 / 12</b><div class="teacher-lines"><button data-say="This is my nose.">🔊 This is my nose.</button><button data-say="These are my eyes.">🔊 These are my eyes.</button><button data-say="These are my hands.">🔊 These are my hands.</button></div><button class="primary" data-screen="home">戴着皇冠回地图</button></div>
+    </section>
+  </main>
+
+  <div id="feedback" class="feedback" role="dialog" aria-live="assertive" aria-modal="true"><div class="feedback-card"><div class="reward"><span id="feedbackIcon">✨</span><img src="elsa-cartoon.jpg" alt="卡通 Elsa"><i>👑</i></div><h2 id="feedbackTitle">Great job!</h2><p id="feedbackText">答对啦！</p><button id="feedbackBtn" class="primary">继续 →</button></div></div>
+  <div id="toast" class="toast" role="status"></div>
+  <footer>Unit 3 原创互动复习 · 学习进度仅保存在本机</footer>
+  <script src="unit3.js"></script>
+</body>
+</html>
