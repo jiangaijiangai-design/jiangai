@@ -1,0 +1,57 @@
+const PARTS=[
+  {word:'nose',one:'nose',emoji:'👃',count:1},{word:'face',one:'face',emoji:'🙂',count:1},
+  {word:'eyes',one:'eye',emoji:'👀',count:2},{word:'ears',one:'ear',emoji:'👂👂',count:2},
+  {word:'arms',one:'arm',emoji:'💪💪',count:2},{word:'hands',one:'hand',emoji:'👐',count:2},
+  {word:'fingers',one:'finger',emoji:'🖐️',count:10},{word:'legs',one:'leg',emoji:'🦵🦵',count:2}
+];
+const PHONICS=[{letter:'I',sound:'/i/',word:'ink',emoji:'🖋️'},{letter:'J',sound:'/j/',word:'jam',emoji:'🍓'},{letter:'K',sound:'/k/',word:'kite',emoji:'🪁'},{letter:'L',sound:'/l/',word:'lion',emoji:'🦁'}];
+const LESSONS=[
+  {icon:'👃 🙂',title:'Body words',text:'一个身体部位：nose, face。多个身体部位：eyes, ears, arms, hands, fingers, legs。',say:'Nose. Face. Eyes. Ears. Arms. Hands. Fingers. Legs.'},
+  {icon:'☝️',title:'This is my…',text:'指一个时，用 This is my…',line:'This is my nose. This is my face.',say:'This is my nose. This is my face.'},
+  {icon:'✌️',title:'These are my…',text:'指两个或更多时，用 These are my…',line:'These are my eyes. These are my hands.',say:'These are my eyes. These are my hands.'},
+  {icon:'🖋️ 🍓 🪁 🦁',title:'Ii · Jj · Kk · Ll',text:'听开头的声音，再把字母和单词连起来。',line:'I–ink · J–jam · K–kite · L–lion',say:'I, ink. J, jam. K, kite. L, lion.'}
+];
+const state={sound:true,scores:{},lesson:0,next:null,vocab:{},grammar:{},action:{},phonics:{},final:{},currentAudio:null};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],shuffle=a=>[...a].sort(()=>Math.random()-.5);
+function preferredVoice(lang='en-GB'){if(!('speechSynthesis'in window))return null;const vs=speechSynthesis.getVoices();const names=lang.startsWith('en')?['Samantha','Ava','Serena','Karen','Moira','Tessa','Sonia','Google UK English Female']:['Ting-Ting','Meijia','Xiaoxiao'];for(const n of names){const v=vs.find(x=>x.name.toLowerCase().includes(n.toLowerCase()));if(v)return v}return vs.find(v=>v.lang.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()))||null}
+function say(text,lang='en-GB',rate=.62){if(!state.sound||!text||!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate;u.pitch=1.03;u.volume=.95;const v=preferredVoice(lang);if(v)u.voice=v;speechSynthesis.speak(u)}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1500)}
+function load(){try{state.scores=JSON.parse(localStorage.getItem('ff1-unit3-scores'))||{}}catch{state.scores={}}updateDashboard()}
+function save(){localStorage.setItem('ff1-unit3-scores',JSON.stringify(state.scores));updateDashboard()}
+function stars(correct,total){const p=correct/total;return p>=.88?3:p>=.6?2:1}
+function award(k,n){state.scores[k]=Math.max(state.scores[k]||0,n);save();toast(`获得 ${n} 颗皇冠星 ★`)}
+function updateDashboard(){let done=0,total=0;['lesson','vocab','grammar','action','phonics','final'].forEach(k=>{const n=state.scores[k]||0;if(n)done++;total+=n;$$(`[data-stars="${k}"]`).forEach(e=>e.textContent='★'.repeat(n)+'☆'.repeat(3-n))});$('#totalStars').textContent=total;$('#progressText').textContent=`${done} / 6`;$('#progressBar').style.width=`${done/6*100}%`}
+function show(id){$$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});if(id==='lesson')renderLesson();if(id==='vocab')startVocab();if(id==='grammar')startGrammar();if(id==='action')startAction();if(id==='phonics')startPhonics();if(id==='final')startFinal()}
+$$('[data-screen]').forEach(b=>b.onclick=()=>show(b.dataset.screen));$$('[data-say]').forEach(b=>b.onclick=()=>say(b.dataset.say));
+$('#soundToggle').onclick=()=>{state.sound=!state.sound;$('#soundToggle').textContent=state.sound?'🔊':'🔇';if(!state.sound)speechSynthesis.cancel();toast(state.sound?'声音已打开':'声音已关闭')};
+$('#resetBtn').onclick=()=>{if(confirm('要清除 Unit 3 的星星和进度吗？')){state.scores={};localStorage.removeItem('ff1-unit3-scores');updateDashboard();toast('进度已清除')}};
+function feedback(ok,title,text,next,english=''){const f=$('#feedback');f.className=`feedback show ${ok?'right':'wrong'}`;$('#feedbackIcon').textContent=ok?'✨':'💪';$('#feedbackTitle').textContent=title;$('#feedbackText').textContent=text;$('#feedbackBtn').textContent=ok?'继续 →':'再试一次';state.next=next||null;say(english||(ok?'Great job!':'Try again. You can do it!'))}
+$('#feedbackBtn').onclick=()=>{const n=state.next;$('#feedback').className='feedback';state.next=null;if(n)n()};
+
+function renderLesson(){const x=LESSONS[state.lesson];$('#lessonCount').textContent=`${state.lesson+1} / ${LESSONS.length}`;$('#lessonScene').innerHTML=`<div class="lesson-card"><div class="lesson-icon">${x.icon}</div><h3>${x.title}</h3><p>${x.text}</p>${x.line?`<strong>${x.line}</strong>`:''}</div>`}
+$('#lessonPrev').onclick=()=>{state.lesson=(state.lesson+LESSONS.length-1)%LESSONS.length;renderLesson();say(LESSONS[state.lesson].say)};
+$('#lessonNext').onclick=()=>{state.lesson=(state.lesson+1)%LESSONS.length;renderLesson();say(LESSONS[state.lesson].say)};
+$('#lessonSpeak').onclick=()=>say(LESSONS[state.lesson].say);
+$('#lessonDone').onclick=()=>{award('lesson',3);feedback(true,'知识地图完成！','词汇、句型和首音都装进脑袋啦！',()=>show('home'),'You are ready!')};
+
+function startVocab(){state.vocab={round:0,correct:0};nextVocab()}
+function nextVocab(){if(state.vocab.round>=8){award('vocab',stars(state.vocab.correct,8));return feedback(true,'听音挑战完成！',`你听对了 ${state.vocab.correct} / 8 个身体部位。`,()=>show('home'),'Body words complete!')}const target=PARTS[state.vocab.round%PARTS.length];state.vocab.target=target;state.vocab.round++;$('#vocabCount').textContent=`${state.vocab.round} / 8`;const opts=shuffle([target,...shuffle(PARTS.filter(x=>x!==target)).slice(0,3)]);$('#vocabChoices').innerHTML=opts.map(x=>`<button data-word="${x.word}"><span>${x.emoji}</span>${x.word}</button>`).join('');$$('#vocabChoices button').forEach(b=>b.onclick=()=>{if(b.dataset.word===target.word){state.vocab.correct++;feedback(true,'Great job!',`${target.word}，听对啦！`,nextVocab,`${target.word}. Great job!`)}else feedback(false,'Listen again!','再认真听一次，你一定能找到。',()=>say(target.word),target.word)});setTimeout(()=>say(target.word),180)}
+$('#vocabSpeak').onclick=()=>say(state.vocab.target?.word||'');
+
+function sentenceFor(p){return p.count===1?`This is my ${p.word}.`:`These are my ${p.word}.`}
+function startGrammar(){state.grammar={round:0,correct:0};nextGrammar()}
+function nextGrammar(){if(state.grammar.round>=8){award('grammar',stars(state.grammar.correct,8));return feedback(true,'单复数通关！',`你答对了 ${state.grammar.correct} / 8 题。`,()=>show('home'),'This is and these are. Well done!')}const p=PARTS[state.grammar.round%PARTS.length];state.grammar.round++;state.grammar.target=p;$('#grammarCount').textContent=`${state.grammar.round} / 8`;$('#grammarVisual').innerHTML=`${p.emoji}<b>${p.word}</b>`;const correct=sentenceFor(p),wrong1=p.count===1?`These are my ${p.word}.`:`This is my ${p.word}.`,wrong2=p.count===1?`This are my ${p.word}.`:`These is my ${p.word}.`;$('#grammarChoices').innerHTML=shuffle([correct,wrong1,wrong2]).map(x=>`<button>${x}</button>`).join('');$$('#grammarChoices button').forEach(b=>b.onclick=()=>{if(b.textContent===correct){state.grammar.correct++;feedback(true,'Exactly!',correct,nextGrammar,correct)}else feedback(false,'One or many?','一个用 This is，多个用 These are。',()=>say(correct),correct)});say(correct)}
+
+function startAction(){state.action={round:0,correct:0};nextAction()}
+function nextAction(){if(state.action.round>=6){award('action',stars(state.action.correct,6));return feedback(true,'动作站完成！',`你听懂了 ${state.action.correct} / 6 个动作指令。`,()=>show('home'),'Fantastic listening!')}const p=shuffle(PARTS)[0],verb=Math.random()>.5?'Touch':'Point to';state.action.target=p;state.action.prompt=`${verb} your ${p.word}.`;state.action.round++;$('#actionCount').textContent=`${state.action.round} / 6`;$('#actionPrompt').textContent=state.action.prompt;const opts=shuffle([p,...shuffle(PARTS.filter(x=>x!==p)).slice(0,3)]);$('#actionChoices').innerHTML=opts.map(x=>`<button data-word="${x.word}">${x.emoji} ${x.word}</button>`).join('');$$('#actionChoices button').forEach(b=>b.onclick=()=>{if(b.dataset.word===p.word){state.action.correct++;feedback(true,'动作正确！',state.action.prompt,nextAction,'Great action!')}else feedback(false,'再听一次！','先做动作，再选择你碰到的部位。',()=>say(state.action.prompt),state.action.prompt)});say(state.action.prompt)}
+$('#actionSpeak').onclick=()=>say(state.action.prompt||'');
+
+function startPhonics(){state.phonics={round:0,correct:0};nextPhonics()}
+function nextPhonics(){if(state.phonics.round>=8){award('phonics',stars(state.phonics.correct,8));return feedback(true,'声音密码破解！',`你破解了 ${state.phonics.correct} / 8 个首音。`,()=>show('home'),'Phonics complete!')}const p=PHONICS[state.phonics.round%PHONICS.length];state.phonics.target=p;state.phonics.round++;$('#phonicsCount').textContent=`${state.phonics.round} / 8`;$('#phonicLetter').textContent=p.letter;$('#phonicSound').textContent=p.sound;const opts=shuffle([p,...shuffle(PHONICS.filter(x=>x!==p)).slice(0,2)]);$('#phonicsChoices').innerHTML=opts.map(x=>`<button data-word="${x.word}"><span>${x.emoji}</span>${x.word}</button>`).join('');$$('#phonicsChoices button').forEach(b=>b.onclick=()=>{if(b.dataset.word===p.word){state.phonics.correct++;feedback(true,'Sound match!',`${p.letter} — ${p.word}`,nextPhonics,`${p.letter}. ${p.word}.`)}else feedback(false,'听开头！',`${p.letter} says ${p.sound}`,()=>say(`${p.letter}. ${p.sound}.`),`${p.letter}. ${p.sound}.`)});say(`${p.letter}. ${p.sound}.`)}
+$('#phonicsSpeak').onclick=()=>{const p=state.phonics.target;if(p)say(`${p.letter}. ${p.sound}. ${p.word}.`)};
+
+function buildFinal(){const items=[];shuffle(PARTS).slice(0,4).forEach(p=>items.push({type:'BODY WORDS',prompt:`<span>${p.emoji}</span>What is it?`,answer:p.word,choices:shuffle([p.word,...shuffle(PARTS.filter(x=>x!==p)).slice(0,2).map(x=>x.word)]),say:p.word}));shuffle(PARTS).slice(0,4).forEach(p=>{const a=sentenceFor(p);items.push({type:'THIS OR THESE?',prompt:`<span>${p.emoji}</span>${p.word}`,answer:a,choices:shuffle([a,p.count===1?`These are my ${p.word}.`:`This is my ${p.word}.`,p.count===1?`This are my ${p.word}.`:`These is my ${p.word}.`]),say:a})});PHONICS.forEach(p=>items.push({type:'PHONICS',prompt:`${p.letter} says ${p.sound}`,answer:p.word,choices:shuffle([p.word,...shuffle(PHONICS.filter(x=>x!==p)).slice(0,2).map(x=>x.word)]),say:`${p.letter}. ${p.word}.`}));return shuffle(items)}
+function startFinal(){state.final={round:0,correct:0,items:buildFinal()};$('#finalGame').classList.remove('hidden');$('#certificate').classList.add('hidden');nextFinal()}
+function nextFinal(){if(state.final.round>=12){award('final',stars(state.final.correct,12));$('#finalGame').classList.add('hidden');$('#certificate').classList.remove('hidden');$('#finalScore').textContent=`${state.final.correct} / 12`;say('Congratulations! You are ready for class!');return}const q=state.final.items[state.final.round];$('#finalCount').textContent=`${state.final.round+1} / 12`;$('#finalBar').style.width=`${(state.final.round+1)/12*100}%`;$('#finalType').textContent=q.type;$('#finalPrompt').innerHTML=q.prompt;$('#finalChoices').innerHTML=q.choices.map(x=>`<button>${x}</button>`).join('');$$('#finalChoices button').forEach(b=>b.onclick=()=>{if(b.textContent===q.answer){state.final.correct++;state.final.round++;feedback(true,'老师也会点赞！',q.answer,nextFinal,q.say)}else feedback(false,'慢慢想一想！','看清是一个还是多个，再试一次。',()=>say(q.say),q.say)});say(q.say)}
+
+load();renderLesson();
