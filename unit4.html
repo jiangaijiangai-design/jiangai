@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#83aa9f">
+  <title>He's a hero! — Unit 4 职业英雄城</title>
+  <link rel="stylesheet" href="unit4.css">
+</head>
+<body>
+  <div class="dots-bg" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="unit4.html"><span class="unit">4</span><span><b>He's a hero!</b><small>职业英雄城</small></span></a>
+    <nav><a href="unit3.html">← Unit 3</a><span class="counter crown-counter">👑 <b id="crownCount">0</b></span><span class="counter point-counter">积分 <b id="pointCount">0</b>/5</span><button id="soundBtn" class="circle" aria-label="声音开关">🔊</button><button id="resetBtn" class="plain">重置</button></nav>
+  </header>
+
+  <main>
+    <section id="home" class="screen active">
+      <div class="hero card">
+        <div class="hero-copy"><span class="eyebrow">FAMILY & FRIENDS 1 · UNIT 4</span><h1>He's a<br>hero!</h1><p>认识职业英雄，分清 <b>he</b> 和 <b>she</b>，会问 <b>Is he / she a…?</b>，再破解 Mm–Pp 的声音密码。</p><div class="hero-actions"><button class="primary" data-screen="learn">先认识职业</button><button class="secondary" data-screen="final">开始积分挑战 →</button></div><div class="session-bar"><div><span>今日复习进度</span><b id="homeProgress">0 / 4</b></div><div><i id="homeProgressBar"></i></div></div></div>
+        <div class="hero-art"><span class="job j1">pilot ✈️</span><span class="job j2">doctor 🩺</span><span class="job j3">teacher 📚</span><div class="elsa-wrap"><span>👑</span><img src="elsa-cartoon.jpg" alt="卡通 Elsa"></div><div class="hero-bubble"><b>Every right answer</b><br>earns a crown!</div></div>
+      </div>
+
+      <div class="reward-rules card"><div><span class="rule-icon">👑</span><p><b>皇冠奖励</b><br>每答对一题，Elsa 立即戴皇冠。</p></div><div><span class="rule-icon">⭐</span><p><b>积分奖励（最高 5 分）</b><br>综合挑战首次正确率越高，积分越多。</p></div><div class="score-scale"><span>95%<b>5分</b></span><span>85%<b>4分</b></span><span>70%<b>3分</b></span><span>55%<b>2分</b></span><span>40%<b>1分</b></span></div></div>
+
+      <div class="section-title"><div><span>HERO TRAINING</span><h2>四站职业训练</h2></div><button id="mistakeShortcut" class="mistake-shortcut" data-screen="review">错题训练营 <b id="mistakeCount">0</b></button></div>
+      <div class="mission-grid">
+        <button class="mission mint" data-screen="learn"><span>01</span><i>🧑‍🏫</i><h3>职业图鉴</h3><p>10 个职业，听、看、说</p><b data-done="learn">未完成</b></button>
+        <button class="mission peach" data-screen="jobs"><span>02</span><i>👂</i><h3>听音找职业</h3><p>听单词，找到正确人物</p><b data-done="jobs">未完成</b></button>
+        <button class="mission sky" data-screen="grammar"><span>03</span><i>🕵️</i><h3>He or She?</h3><p>职业描述与问答判断</p><b data-done="grammar">未完成</b></button>
+        <button class="mission lilac" data-screen="phonics"><span>04</span><i>🔤</i><h3>声音密码</h3><p>Mm · Nn · Oo · Pp</p><b data-done="phonics">未完成</b></button>
+      </div>
+      <div class="final-banner card"><div><span>🏆</span><div><b>15 题综合积分挑战</b><p>系统只计算第一次作答；错题自动记下，挑战结束后集中复习。</p></div></div><button class="primary" data-screen="final">挑战最高 5 分</button></div>
+    </section>
+
+    <section id="learn" class="screen game-screen"><div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 01</span><h2>职业图鉴</h2></div><span class="mini-reward">👑 <b id="learnCrowns">0</b></span></div><div class="learn-layout"><div class="flash-card card"><button id="jobSpeak" class="speaker">🔊</button><div id="jobEmoji" class="job-emoji">🧑‍🏫</div><h3 id="jobWord">teacher</h3><p id="jobCn">老师</p><strong id="jobSentence">She's a teacher.</strong></div><div class="job-list card" id="jobList"></div></div><div class="flash-nav"><button id="jobPrev" class="secondary">← 上一个</button><b id="jobIndex">1 / 10</b><button id="jobNext" class="primary">下一个 →</button></div><button id="learnDone" class="finish-btn">10 个职业我都认识了 ✓</button></section>
+
+    <section id="jobs" class="screen game-screen"><div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 02</span><h2>听音找职业</h2></div><span class="mini-reward">👑 <b id="jobsCrowns">0</b></span></div><div class="quiz card"><div class="quiz-top"><span>听职业名称，选择正确人物</span><b id="jobsRound">1 / 10</b></div><button id="jobsSpeak" class="listen">🔊<small>再听一次</small></button><div id="jobsChoices" class="picture-grid"></div></div></section>
+
+    <section id="grammar" class="screen game-screen"><div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 03</span><h2>He or She?</h2></div><span class="mini-reward">👑 <b id="grammarCrowns">0</b></span></div><div class="grammar-rule card"><div>👨<b>He's a pilot.</b><small>He is → He's</small></div><i>↔</i><div>👩<b>She's a doctor.</b><small>She is → She's</small></div></div><div class="quiz card"><div class="quiz-top"><span id="grammarMode">选择正确的句子</span><b id="grammarRound">1 / 10</b></div><div id="grammarPerson" class="person-scene"></div><h3 id="grammarQuestion"></h3><button id="grammarSpeak" class="listen-line">🔊 听问题</button><div id="grammarChoices" class="answer-grid"></div></div></section>
+
+    <section id="phonics" class="screen game-screen"><div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 04</span><h2>声音密码</h2></div><span class="mini-reward">👑 <b id="phonicsCrowns">0</b></span></div><div class="phonic-strip"><button data-say="M. mum. /m/." class="m"><b>Mm</b><span>👩</span><small>mum</small></button><button data-say="N. nurse. /n/." class="n"><b>Nn</b><span>🧑‍⚕️</span><small>nurse</small></button><button data-say="O. orange. /o/." class="o"><b>Oo</b><span>🍊</span><small>orange</small></button><button data-say="P. pen. /p/." class="p"><b>Pp</b><span>🖊️</span><small>pen</small></button></div><div class="quiz card"><div class="quiz-top"><span>听首音，找到正确单词</span><b id="phonicsRound">1 / 8</b></div><button id="phonicsSpeak" class="sound-orb"><b id="phonicLetter">M</b><span id="phonicSound">/m/</span>🔊</button><div id="phonicsChoices" class="picture-grid"></div></div></section>
+
+    <section id="final" class="screen game-screen"><div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>15-QUESTION CHALLENGE</span><h2>积分挑战</h2></div><span class="mini-reward">积分 <b id="livePoints">0</b>/5</span></div><div id="challengeCard" class="challenge card"><div class="challenge-top"><span id="challengeType">JOBS</span><b id="challengeRound">1 / 15</b></div><div class="progress-line"><i id="challengeBar"></i></div><div id="challengePrompt" class="challenge-prompt"></div><button id="challengeSpeak" class="listen-line">🔊 听题</button><div id="challengeChoices" class="answer-grid"></div><div class="accuracy"><span>首次答对</span><b id="challengeAccuracy">0 / 0</b></div></div><div id="challengeResult" class="result card hidden"><span class="trophy">🏆</span><h2>本轮积分</h2><div class="big-points"><b id="earnedPoints">0</b><span>/ 5</span></div><p id="resultSummary"></p><button id="goReview" class="primary">进入错题加强复习 →</button></div></section>
+
+    <section id="review" class="screen game-screen"><div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>MISTAKE CAMP</span><h2>错题训练营</h2></div><span class="mini-reward">剩余 <b id="reviewLeft">0</b></span></div><div id="reviewEmpty" class="empty card hidden"><span>🌟</span><h2>错题本是空的！</h2><p>所有做错的题目都已经重新答对了。</p><button class="primary" data-screen="home">回到地图</button></div><div id="reviewCard" class="review-card card"><div class="review-note">这道题之前做错过。听一听、想一想，答对后才能从错题本移除。</div><span id="reviewType" class="eyebrow"></span><div id="reviewPrompt" class="challenge-prompt"></div><button id="reviewSpeak" class="listen-line">🔊 再听一次</button><div id="reviewChoices" class="answer-grid"></div></div></section>
+
+    <section id="certificate" class="screen game-screen"><div class="certificate card"><span class="cert-crown">👑</span><img src="elsa-cartoon.jpg" alt="卡通 Elsa"><span class="eyebrow">UNIT 4 REVIEW COMPLETE</span><h2>职业英雄小达人</h2><div class="cert-score"><span>本轮积分</span><b id="certPoints">5 / 5</b></div><p>Elsa 已经复习了职业词汇、He / She 问答和 Mm–Pp，并完成了所有错题加强训练！</p><button class="primary" data-screen="home">戴着皇冠回地图</button></div></section>
+  </main>
+
+  <div id="feedback" class="feedback" role="dialog" aria-live="assertive"><div class="feedback-card"><div class="crown-stage"><span class="spark s1">✦</span><span class="spark s2">✧</span><div class="falling-crown">👑</div><img src="elsa-cartoon.jpg" alt="卡通 Elsa"></div><h2 id="feedbackTitle">Great job!</h2><p id="feedbackText"></p><button id="feedbackBtn" class="primary">继续 →</button></div></div>
+  <div id="toast" class="toast" role="status"></div>
+  <footer>Unit 4 原创互动复习 · 皇冠、积分与错题本仅保存在本机</footer>
+  <script src="unit4.js"></script>
+</body>
+</html>
