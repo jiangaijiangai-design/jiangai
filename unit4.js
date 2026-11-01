@@ -1,5 +1,5 @@
 const JOBS=[
- {word:'teacher',cn:'老师',emoji:'🧑‍🏫',gender:'she'},{word:'pupil',cn:'学生',emoji:'👧',gender:'she'},
+ {word:'teacher',cn:'老师',emoji:'🧑‍🏫',gender:'she'},{word:'student',cn:'学生',emoji:'👧',gender:'she'},
  {word:'housewife',cn:'家庭主妇',emoji:'👩‍🍳',gender:'she'},{word:'fireman',cn:'消防员',emoji:'👨‍🚒',gender:'he'},
  {word:'pilot',cn:'飞行员',emoji:'👨‍✈️',gender:'he'},{word:'doctor',cn:'医生',emoji:'👩‍⚕️',gender:'she'},
  {word:'farmer',cn:'农民',emoji:'👨‍🌾',gender:'he'},{word:'policeman',cn:'警察',emoji:'👮‍♂️',gender:'he'},
@@ -9,7 +9,8 @@ const PHONICS=[{letter:'M',sound:'/m/',word:'mum',emoji:'👩'},{letter:'N',soun
 const STORAGE='ff1-unit4-state';
 const state={sound:true,jobIndex:0,crowns:0,bestPoints:0,done:{},mistakes:[],next:null,jobs:{},grammar:{},phonics:{},challenge:{},review:[]};
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],shuffle=a=>[...a].sort(()=>Math.random()-.5),cap=s=>s[0].toUpperCase()+s.slice(1);
-function load(){try{const d=JSON.parse(localStorage.getItem(STORAGE))||{};state.crowns=d.crowns||0;state.bestPoints=d.bestPoints||0;state.done=d.done||{};state.mistakes=Array.isArray(d.mistakes)?d.mistakes:[]}catch{}updateDashboard()}
+function replacePupil(value){if(typeof value==='string')return value.replace(/\bpupil\b/gi,'student');if(Array.isArray(value))return value.map(replacePupil);if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([k,v])=>[k,replacePupil(v)]));return value}
+function load(){try{const d=JSON.parse(localStorage.getItem(STORAGE))||{};state.crowns=d.crowns||0;state.bestPoints=d.bestPoints||0;state.done=d.done||{};state.mistakes=replacePupil(Array.isArray(d.mistakes)?d.mistakes:[])}catch{}updateDashboard()}
 function save(){localStorage.setItem(STORAGE,JSON.stringify({crowns:state.crowns,bestPoints:state.bestPoints,done:state.done,mistakes:state.mistakes}));updateDashboard()}
 function preferredVoice(lang='en-GB'){if(!('speechSynthesis'in window))return null;const vs=speechSynthesis.getVoices();const names=lang.startsWith('en')?['Samantha','Ava','Serena','Karen','Moira','Tessa','Sonia','Google UK English Female']:['Ting-Ting','Meijia','Xiaoxiao'];for(const n of names){const v=vs.find(x=>x.name.toLowerCase().includes(n.toLowerCase()));if(v)return v}return vs.find(v=>v.lang.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()))||null}
 function say(text,lang='en-GB',rate=.62){if(!state.sound||!text||!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate;u.pitch=1.03;u.volume=.95;const v=preferredVoice(lang);if(v)u.voice=v;speechSynthesis.speak(u)}
