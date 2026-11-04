@@ -50,11 +50,28 @@ const SPEAKING_TARGETS=[
 const STORAGE='ff1-unit4-state';
 const state={sound:true,jobIndex:0,crowns:0,bestPoints:0,speakingBest:0,done:{},mistakes:[],next:null,jobs:{},grammar:{},spelling:{},sentence:{},story:{},phonics:{},speaking:{index:0,scores:[]},challenge:{},review:{}};
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],shuffle=a=>[...a].sort(()=>Math.random()-.5),cap=s=>s[0].toUpperCase()+s.slice(1);
+const mobileAudio=new Audio();mobileAudio.id='unit4Player';mobileAudio.preload='auto';mobileAudio.setAttribute('playsinline','');mobileAudio.hidden=true;document.body.appendChild(mobileAudio);
+const AUDIO_LOOKUP=new Map();
+const audioKey=text=>(text||'').toLowerCase().replace(/[’]/g,"'").replace(/\/([a-zɒ])\//g,'$1').replace(/[^a-zɒ']+/g,' ').trim();
+const registerAudio=(text,id)=>AUDIO_LOOKUP.set(audioKey(text),id);
+JOBS.forEach(j=>{registerAudio(j.word,j.word);registerAudio(`${j.gender==='he'?"He's":"She's"} a ${j.word}.`,`sent_${j.word}`);registerAudio(`Is he a ${j.word}?`,`q_he_${j.word}`);registerAudio(`Is she a ${j.word}?`,`q_she_${j.word}`)});
+[["Sound is ready. Let's learn English!",'sound_ready'],['Yes, he is.','yes_he'],['Yes, she is.','yes_she'],["No, he isn't.",'no_he'],["No, she isn't.",'no_she'],['M. /m/. mum.','phonic_m'],['M. mum. /m/.','phonic_m'],['N. /n/. nurse.','phonic_n'],['N. nurse. /n/.','phonic_n'],['O. /o/. orange.','phonic_o'],['O. orange. /o/.','phonic_o'],['P. /p/. pen.','phonic_p'],['P. pen. /p/.','phonic_p'],[STORY_TEXT,'story'],['Who is a doctor?','story_doctor'],['Is Dad a pilot?','story_dad_pilot'],['Who is a student?','story_student'],['Is Grandpa a doctor?','story_grandpa'],['Who is kind?','story_kind'],['Who is a hero?','story_hero'],['Wonderful! You earned a crown!','great_crown'],['Listen and remember. You can do it!','try_again'],['Jobs complete!','jobs_complete'],['Job listening complete!','listening_complete'],['Grammar complete!','grammar_complete'],['Spelling complete!','spelling_complete'],['Sentence builder complete!','sentence_complete'],['Reading complete!','reading_complete'],['Phonics complete!','phonics_complete'],['Speaking practice complete!','speaking_complete'],['Wonderful! Your speaking is clear. You earned a crown!','speaking_crown']].forEach(([text,id])=>registerAudio(text,id));
+let audioQueue=[],audioQueueToken=0;
+function playRecorded(text){
+  if(!window.UNIT4_AUDIO)return false;
+  const exact=AUDIO_LOOKUP.get(audioKey(text));
+  let ids=exact?[exact]:[];
+  if(!ids.length){const parts=(text.match(/[^.!?]+[.!?]?/g)||[]).map(x=>x.trim()).filter(Boolean),partIds=parts.map(x=>AUDIO_LOOKUP.get(audioKey(x)));if(parts.length&&partIds.every(Boolean))ids=partIds}
+  if(!ids.length)return false;
+  const token=++audioQueueToken;audioQueue=[...ids];mobileAudio.pause();
+  const next=()=>{if(token!==audioQueueToken||!audioQueue.length)return;const id=audioQueue.shift(),src=window.UNIT4_AUDIO[id];if(!src)return;mobileAudio.src=src;mobileAudio.currentTime=0;mobileAudio.onended=next;const result=mobileAudio.play();if(result?.catch)result.catch(()=>{$('#soundGate')?.classList.add('show')})};
+  next();return true;
+}
 function replacePupil(value){if(typeof value==='string')return value.replace(/\bpupil\b/gi,'student');if(Array.isArray(value))return value.map(replacePupil);if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([k,v])=>[k,replacePupil(v)]));return value}
 function load(){try{const d=JSON.parse(localStorage.getItem(STORAGE))||{};state.crowns=d.crowns||0;state.bestPoints=d.bestPoints||0;state.speakingBest=d.speakingBest||0;state.done=d.done||{};state.mistakes=replacePupil(Array.isArray(d.mistakes)?d.mistakes:[]).map(q=>({...q,explain:q.explain||`正确答案是：${q.answer}`}))}catch{}updateDashboard()}
 function save(){localStorage.setItem(STORAGE,JSON.stringify({crowns:state.crowns,bestPoints:state.bestPoints,speakingBest:state.speakingBest,done:state.done,mistakes:state.mistakes}));updateDashboard()}
 function preferredVoice(lang='en-GB'){if(!('speechSynthesis'in window))return null;const vs=speechSynthesis.getVoices();const names=lang.startsWith('en')?['Samantha','Ava','Serena','Karen','Moira','Tessa','Sonia','Google UK English Female']:['Ting-Ting','Meijia','Xiaoxiao'];for(const n of names){const v=vs.find(x=>x.name.toLowerCase().includes(n.toLowerCase()));if(v)return v}return vs.find(v=>v.lang.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()))||null}
-function say(text,lang='en-GB',rate=.58){if(!state.sound||!text||!('speechSynthesis'in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate;u.pitch=1.03;u.volume=.96;const v=preferredVoice(lang);if(v)u.voice=v;speechSynthesis.speak(u)}
+function say(text,lang='en-GB',rate=.58){if(!state.sound||!text)return;if(playRecorded(text))return;if(!('speechSynthesis'in window)){$('#soundGate')?.classList.add('show');return}const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=rate;u.pitch=1.03;u.volume=.96;const v=preferredVoice(lang);if(v)u.voice=v;speechSynthesis.resume();speechSynthesis.speak(u)}
 function updateDashboard(){
   $('#crownCount').textContent=state.crowns;$('#pointCount').textContent=state.bestPoints;$('#mistakeCount').textContent=state.mistakes.length;
   const keys=['learn','jobs','grammar','spelling','sentence','story','phonics','speaking'],done=keys.filter(k=>state.done[k]).length;
@@ -68,7 +85,9 @@ function show(id){
   if(id==='learn')renderJob();if(id==='jobs')startJobs();if(id==='grammar')startGrammar();if(id==='spelling')startSpelling();if(id==='sentence')startSentence();if(id==='story')startStory();if(id==='phonics')startPhonics();if(id==='speaking')startSpeaking();if(id==='final')startChallenge();if(id==='review')startReview();
 }
 $$('[data-screen]').forEach(b=>b.onclick=()=>show(b.dataset.screen));$$('[data-say]').forEach(b=>b.onclick=()=>say(b.dataset.say));
-$('#soundBtn').onclick=()=>{state.sound=!state.sound;$('#soundBtn').textContent=state.sound?'🔊':'🔇';if(!state.sound)speechSynthesis.cancel();toast(state.sound?'声音已打开':'声音已关闭')};
+function enableSound(){state.sound=true;$('#soundBtn').textContent='🔊';$('#soundGate').classList.remove('show');playRecorded('Sound is ready. Let\'s learn English!');toast('声音已开启')}
+$('#enableSoundBtn').onclick=enableSound;
+$('#soundBtn').onclick=()=>{if(!state.sound){enableSound();return}state.sound=false;audioQueueToken++;mobileAudio.pause();if('speechSynthesis'in window)speechSynthesis.cancel();$('#soundBtn').textContent='🔇';toast('声音已关闭，再点一次可打开')};
 $('#resetBtn').onclick=()=>{if(confirm('要清除 Unit 4 的皇冠、积分、口语分数和错题本吗？')){state.crowns=0;state.bestPoints=0;state.speakingBest=0;state.done={};state.mistakes=[];localStorage.removeItem(STORAGE);updateDashboard();toast('Unit 4 记录已清除')}};
 function pointsFor(correct,total){const r=total?correct/total:0;return r>=.95?5:r>=.85?4:r>=.70?3:r>=.55?2:r>=.40?1:0}
 function addMistake(q){if(!q||!q.id)return;const clean={id:q.id,type:q.type,prompt:q.prompt,answer:q.answer,choices:q.choices,say:q.say||q.answer,explain:q.explain||`正确答案是：${q.answer}`};const i=state.mistakes.findIndex(x=>x.id===q.id);if(i<0)state.mistakes.push(clean);else state.mistakes[i]=clean;save()}
@@ -139,3 +158,4 @@ function nextReview(){if(!state.mistakes.length){$('#reviewCard').classList.add(
 $('#reviewSpeak').onclick=()=>say(state.review.q?.say||'');$('#reviewExplain').onclick=()=>{const q=state.review.q;if(q)toggleHint($('#reviewExplain'),$('#reviewHint'),`${q.explain} 正确答案：${q.answer}`)};
 
 load();renderJob();
+if(window.matchMedia?.('(pointer: coarse)').matches||/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)||new URLSearchParams(location.search).has('mobiletest'))$('#soundGate').classList.add('show');
