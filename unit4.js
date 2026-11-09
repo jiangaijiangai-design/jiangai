@@ -56,16 +56,21 @@ const audioKey=text=>(text||'').toLowerCase().replace(/[’]/g,"'").replace(/\/(
 const registerAudio=(text,id)=>AUDIO_LOOKUP.set(audioKey(text),id);
 JOBS.forEach(j=>{registerAudio(j.word,j.word);registerAudio(`${j.gender==='he'?"He's":"She's"} a ${j.word}.`,`sent_${j.word}`);registerAudio(`Is he a ${j.word}?`,`q_he_${j.word}`);registerAudio(`Is she a ${j.word}?`,`q_she_${j.word}`)});
 [["Sound is ready. Let's learn English!",'sound_ready'],['Yes, he is.','yes_he'],['Yes, she is.','yes_she'],["No, he isn't.",'no_he'],["No, she isn't.",'no_she'],['M. /m/. mum.','phonic_m'],['M. mum. /m/.','phonic_m'],['N. /n/. nurse.','phonic_n'],['N. nurse. /n/.','phonic_n'],['O. /o/. orange.','phonic_o'],['O. orange. /o/.','phonic_o'],['P. /p/. pen.','phonic_p'],['P. pen. /p/.','phonic_p'],[STORY_TEXT,'story'],['Who is a doctor?','story_doctor'],['Is Dad a pilot?','story_dad_pilot'],['Who is a student?','story_student'],['Is Grandpa a doctor?','story_grandpa'],['Who is kind?','story_kind'],['Who is a hero?','story_hero'],['Wonderful! You earned a crown!','great_crown'],['Listen and remember. You can do it!','try_again'],['Jobs complete!','jobs_complete'],['Job listening complete!','listening_complete'],['Grammar complete!','grammar_complete'],['Spelling complete!','spelling_complete'],['Sentence builder complete!','sentence_complete'],['Reading complete!','reading_complete'],['Phonics complete!','phonics_complete'],['Speaking practice complete!','speaking_complete'],['Wonderful! Your speaking is clear. You earned a crown!','speaking_crown']].forEach(([text,id])=>registerAudio(text,id));
+[['She is a teacher.','she_teacher_full'],['Is she a teacher?','is_she_teacher'],['He is a doctor.','he_doctor_full'],['Is he a doctor?','is_he_doctor']].forEach(([text,id])=>registerAudio(text,id));
 let audioQueue=[],audioQueueToken=0;
+function playClipIds(ids){
+  if(!state.sound||!window.UNIT4_AUDIO||!ids?.length)return false;
+  const playable=ids.filter(id=>window.UNIT4_AUDIO[id]);if(!playable.length)return false;
+  const token=++audioQueueToken;audioQueue=[...playable];mobileAudio.pause();
+  const next=()=>{if(token!==audioQueueToken||!audioQueue.length)return;const id=audioQueue.shift(),src=window.UNIT4_AUDIO[id];if(!src)return;mobileAudio.src=src;mobileAudio.currentTime=0;mobileAudio.onended=next;const result=mobileAudio.play();if(result?.catch)result.catch(()=>{$('#soundGate')?.classList.add('show')})};
+  next();return true;
+}
 function playRecorded(text){
   if(!window.UNIT4_AUDIO)return false;
   const exact=AUDIO_LOOKUP.get(audioKey(text));
   let ids=exact?[exact]:[];
   if(!ids.length){const parts=(text.match(/[^.!?]+[.!?]?/g)||[]).map(x=>x.trim()).filter(Boolean),partIds=parts.map(x=>AUDIO_LOOKUP.get(audioKey(x)));if(parts.length&&partIds.every(Boolean))ids=partIds}
-  if(!ids.length)return false;
-  const token=++audioQueueToken;audioQueue=[...ids];mobileAudio.pause();
-  const next=()=>{if(token!==audioQueueToken||!audioQueue.length)return;const id=audioQueue.shift(),src=window.UNIT4_AUDIO[id];if(!src)return;mobileAudio.src=src;mobileAudio.currentTime=0;mobileAudio.onended=next;const result=mobileAudio.play();if(result?.catch)result.catch(()=>{$('#soundGate')?.classList.add('show')})};
-  next();return true;
+  return ids.length?playClipIds(ids):false;
 }
 function replacePupil(value){if(typeof value==='string')return value.replace(/\bpupil\b/gi,'student');if(Array.isArray(value))return value.map(replacePupil);if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).map(([k,v])=>[k,replacePupil(v)]));return value}
 function load(){try{const d=JSON.parse(localStorage.getItem(STORAGE))||{};state.crowns=d.crowns||0;state.bestPoints=d.bestPoints||0;state.speakingBest=d.speakingBest||0;state.done=d.done||{};state.mistakes=replacePupil(Array.isArray(d.mistakes)?d.mistakes:[]).map(q=>({...q,explain:q.explain||`正确答案是：${q.answer}`}))}catch{}updateDashboard()}
@@ -81,6 +86,7 @@ function updateDashboard(){
 }
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800)}
 function show(id){
+  if(id!=='grammar')stopPatternVideo();
   $$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});
   if(id==='learn')renderJob();if(id==='jobs')startJobs();if(id==='grammar')startGrammar();if(id==='spelling')startSpelling();if(id==='sentence')startSentence();if(id==='story')startStory();if(id==='phonics')startPhonics();if(id==='speaking')startSpeaking();if(id==='final')startChallenge();if(id==='review')startReview();
 }
@@ -107,8 +113,54 @@ function startJobs(){state.jobs={round:0,correct:0,crowns:0};nextJobs()}
 function nextJobs(){if(state.jobs.round>=10){state.done.jobs=true;save();return feedback(true,'听音站完成！',`第一次答对 ${state.jobs.correct} / 10。错题已加入训练营。`,()=>show('home'),'Job listening complete!')}const j=JOBS[state.jobs.round],q=jobQuestion(j,state.jobs.round);state.jobs.q=q;state.jobs.round++;$('#jobsRound').textContent=`${state.jobs.round} / 10`;$('#jobsChoices').innerHTML=q.choices.map(w=>{const x=JOBS.find(j=>j.word===w);return`<button data-answer="${w}"><span>${x.emoji}</span>${w}</button>`}).join('');$$('#jobsChoices button').forEach(b=>b.onclick=()=>{if(b.dataset.answer===q.answer){state.jobs.correct++;state.jobs.crowns++;$('#jobsCrowns').textContent=state.jobs.crowns;removeMistake(q.id);feedback(true,'皇冠戴好啦！',`${cap(q.answer)}，答对了！`,nextJobs,`${q.answer}. Great job!`)}else{addMistake(q);feedback(false,'这题记下来了',`${q.explain} 最后会再练一次。`,nextJobs,`${q.answer}.`)}});setTimeout(()=>say(q.say),180)}
 $('#jobsSpeak').onclick=()=>say(state.jobs.q?.say||'');
 
+const PATTERN_SCENES=[
+  {duration:5000,audio:['pattern_intro_cn']},
+  {duration:7000,audio:['she_teacher_full','pattern_statement_cn']},
+  {duration:7000,audio:['is_she_teacher','pattern_question_cn']},
+  {duration:7000,audio:['pattern_magic_cn']},
+  {duration:8000,audio:['he_doctor_full','is_he_doctor','pattern_transfer_cn']},
+  {duration:6000,audio:['pattern_finish_cn']}
+];
+const PATTERN_TOTAL=PATTERN_SCENES.reduce((sum,x)=>sum+x.duration,0);
+const PATTERN_QUESTIONS=[
+  {id:'pattern-meaning',emoji:'🧑‍🏫',title:'She is a teacher.',prompt:'这句话是在“告诉”，还是在“提问”？',answer:'她是一名老师。—— 我在告诉你',choices:['她是一名老师。—— 我在告诉你','她是一名老师吗？—— 我在问你'],say:'She is a teacher.',explain:'She 在最前面，所以这是在告诉别人：她是一名老师。'},
+  {id:'pattern-transform',emoji:'👨‍⚕️',title:'我想问：他是一名医生吗？',prompt:'把 He is a doctor. 变成问句，应该选哪一句？',answer:'Is he a doctor?',choices:['Is he a doctor?','He is a doctor.','Is a doctor he?'],say:'Is he a doctor?',explain:'把 is 搬到最前面，再把句号换成问号：Is he a doctor?'}
+];
+let patternTimer=null,patternElapsed=0,patternScene=-1;
+function stopPatternVideo(){if(patternTimer){clearInterval(patternTimer);patternTimer=null}audioQueueToken++;mobileAudio.pause()}
+function showPatternScene(index){
+  if(index===patternScene)return;patternScene=index;
+  $$('.pattern-scene').forEach((el,i)=>el.classList.toggle('active',i===index));
+  $$('#patternDots b').forEach((el,i)=>el.classList.toggle('active',i===index));
+  playClipIds(PATTERN_SCENES[index].audio);
+}
+function formatPatternTime(ms){const seconds=Math.floor(ms/1000);return`0:${String(seconds).padStart(2,'0')} / 0:40`}
+function updatePatternClock(){
+  patternElapsed=Math.min(patternElapsed+200,PATTERN_TOTAL);$('#patternTime').textContent=formatPatternTime(patternElapsed);$('#patternProgress').style.width=`${patternElapsed/PATTERN_TOTAL*100}%`;
+  let total=0,index=0;for(let i=0;i<PATTERN_SCENES.length;i++){total+=PATTERN_SCENES[i].duration;if(patternElapsed<total){index=i;break}index=i}
+  showPatternScene(index);if(patternElapsed>=PATTERN_TOTAL)finishPatternVideo();
+}
+function playPatternVideo(){
+  stopPatternVideo();patternElapsed=0;patternScene=-1;$('#patternProgress').style.width='0';$('#patternTime').textContent='0:00 / 0:40';$('#patternPlayBtn').classList.add('hidden');$('#patternReplayBtn').classList.add('hidden');$('#patternPractice').classList.add('hidden');$('#patternComplete').classList.add('hidden');showPatternScene(0);patternTimer=setInterval(updatePatternClock,200);
+}
+function finishPatternVideo(){
+  if(patternTimer){clearInterval(patternTimer);patternTimer=null}patternElapsed=PATTERN_TOTAL;$('#patternTime').textContent='0:40 / 0:40';$('#patternProgress').style.width='100%';$('#patternReplayBtn').classList.remove('hidden');state.grammar.mastery=0;state.grammar.masteryCorrect=0;$('#patternPractice').classList.remove('hidden');renderPatternQuestion();setTimeout(()=>$('#patternPractice').scrollIntoView({behavior:'smooth',block:'center'}),250);
+}
+function renderPatternQuestion(){
+  const i=state.grammar.mastery,q=PATTERN_QUESTIONS[i];$('#patternQuestionCount').textContent=`第 ${i+1} 题 / 2`;$('#patternQuestion').innerHTML=`<span>${q.emoji}</span><h3>${q.title}</h3><p>${q.prompt}</p>`;$('#patternChoices').innerHTML=q.choices.map(x=>`<button>${x}</button>`).join('');$('#patternAnswerHelp').classList.add('hidden');$('#patternNextBtn').classList.add('hidden');$('#patternNextBtn').textContent=i===0?'下一题 →':'完成 2 题 ✓';$$('#patternChoices button').forEach(b=>b.onclick=()=>checkPatternAnswer(b,q));say(q.say);
+}
+function checkPatternAnswer(button,q){
+  if(button.textContent===q.answer){$$('#patternChoices button').forEach(b=>b.disabled=true);button.classList.add('correct');$('#patternAnswerHelp').innerHTML=`<b>答对了！</b> ${q.explain}`;$('#patternAnswerHelp').classList.remove('hidden');$('#patternNextBtn').classList.remove('hidden');state.grammar.masteryCorrect++;state.grammar.crowns++;$('#grammarCrowns').textContent=state.grammar.crowns;removeMistake(q.id);crown();say('Wonderful! You earned a crown!')}
+  else{button.classList.add('wrong');$('#patternAnswerHelp').innerHTML=`<b>再看一眼口诀：</b>人物在前是告诉，Is 在前是提问。你可以马上再选一次。`;$('#patternAnswerHelp').classList.remove('hidden');addMistake({id:q.id,type:'陈述句和问句',prompt:`<span>${q.emoji}</span>${q.prompt}`,answer:q.answer,choices:q.choices,say:q.say,explain:q.explain});say('Listen and remember. You can do it!')}
+}
+function finishPatternPractice(){
+  state.done.grammar=true;save();$('#patternPractice').classList.add('hidden');$('#patternComplete').classList.remove('hidden');$('#patternComplete').scrollIntoView({behavior:'smooth',block:'center'});say('Wonderful! You earned a crown!');
+}
+$('#patternPlayBtn').onclick=playPatternVideo;$('#patternReplayBtn').onclick=playPatternVideo;$('#patternNextBtn').onclick=()=>{if(state.grammar.mastery===0){state.grammar.mastery=1;renderPatternQuestion()}else finishPatternPractice()};
+$('#startGrammarDrill').onclick=()=>{$('#patternVideo').classList.add('hidden');$('#patternComplete').classList.add('hidden');$('#grammarDrill').classList.remove('hidden');state.grammar.round=0;state.grammar.correct=0;nextGrammar()};
+
 function grammarQuestion(j,round){const ask=round%2===1;if(!ask){const answer=jobSentence(j),wrong1=`${j.gender==='he'?"She's":"He's"} a ${j.word}.`,wrong2=`${j.gender==='he'?'He':'She'} a ${j.word}.`;return{id:`grammar-s-${j.word}`,type:'He / She',prompt:`<span>${j.emoji}</span>${j.cn}`,answer,choices:shuffle([answer,wrong1,wrong2]),say:answer,explain:`${j.gender==='he'?'男性用 He，He is 缩写成 He\'s。':'女性用 She，She is 缩写成 She\'s。'} 职业前要有 a。`}}const claimed=JOBS[(JOBS.indexOf(j)+(round%3===0?1:0))%JOBS.length].word,truth=claimed===j.word,question=`Is ${j.gender} a ${claimed}?`,answer=truth?`Yes, ${j.gender} is.`:`No, ${j.gender} isn't.`;return{id:`grammar-q-${j.word}-${claimed}`,type:'职业问答',prompt:`<span>${j.emoji}</span>${question}`,answer,choices:shuffle([answer,truth?`No, ${j.gender} isn't.`:`Yes, ${j.gender} is.`,`Yes, ${j.gender==='he'?'she':'he'} is.`]),say:question,explain:`图中是 ${j.word}。${truth?'职业相同，用 Yes':'职业不同，用 No'}；${j.gender==='he'?'男性用 he':'女性用 she'}。`}}
-function startGrammar(){state.grammar={round:0,correct:0,crowns:0};nextGrammar()}
+function startGrammar(){stopPatternVideo();state.grammar={round:0,correct:0,crowns:0,mastery:0,masteryCorrect:0};$('#grammarCrowns').textContent='0';$('#patternVideo').classList.remove('hidden');$('#patternPractice').classList.add('hidden');$('#patternComplete').classList.add('hidden');$('#grammarDrill').classList.add('hidden');$('#patternPlayBtn').classList.remove('hidden');$('#patternReplayBtn').classList.add('hidden');patternElapsed=0;patternScene=0;$('#patternProgress').style.width='0';$('#patternTime').textContent='0:00 / 0:40';$$('.pattern-scene').forEach((el,i)=>el.classList.toggle('active',i===0));$$('#patternDots b').forEach((el,i)=>el.classList.toggle('active',i===0))}
 function nextGrammar(){if(state.grammar.round>=10){state.done.grammar=true;save();return feedback(true,'He / She 通关！',`第一次答对 ${state.grammar.correct} / 10。`,()=>show('home'),'Grammar complete!')}const j=JOBS[state.grammar.round%JOBS.length],q=grammarQuestion(j,state.grammar.round);state.grammar.q=q;state.grammar.round++;$('#grammarRound').textContent=`${state.grammar.round} / 10`;$('#grammarMode').textContent=q.type;$('#grammarPerson').innerHTML=`${j.emoji}<b>${j.word}</b>`;$('#grammarQuestion').textContent=q.say;$('#grammarChoices').innerHTML=q.choices.map(x=>`<button>${x}</button>`).join('');$$('#grammarChoices button').forEach(b=>b.onclick=()=>{if(b.textContent===q.answer){state.grammar.correct++;state.grammar.crowns++;$('#grammarCrowns').textContent=state.grammar.crowns;removeMistake(q.id);feedback(true,'判断正确！',q.answer,nextGrammar,q.answer)}else{addMistake(q);feedback(false,'这题进入错题本',`${q.explain} 正确答案：${q.answer}`,nextGrammar,`${q.say} ${q.answer}`)}});say(q.say)}
 $('#grammarSpeak').onclick=()=>say(state.grammar.q?.say||'');
 
