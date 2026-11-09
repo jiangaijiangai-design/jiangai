@@ -37,7 +37,7 @@
       <div class="mission-grid">
         <button class="mission mint" data-screen="learn"><span>01</span><i>🧑‍🏫</i><h3>职业图鉴</h3><p>10 个职业，听、看、说</p><b data-done="learn">未完成</b></button>
         <button class="mission peach" data-screen="jobs"><span>02</span><i>👂</i><h3>听音找职业</h3><p>听单词，找到正确人物</p><b data-done="jobs">未完成</b></button>
-        <button class="mission sky" data-screen="grammar"><span>03</span><i>🕵️</i><h3>He or She?</h3><p>职业描述与问答判断</p><b data-done="grammar">未完成</b></button>
+        <button class="mission sky" data-screen="grammar"><span>03</span><i>🎬</i><h3>告诉，还是提问？</h3><p>先看动画，再做 2 道举一反三题</p><b data-done="grammar">未完成</b></button>
         <button class="mission yellow" data-screen="spelling"><span>04</span><i>✏️</i><h3>拼写工坊</h3><p>看图补全职业单词</p><b data-done="spelling">未完成</b></button>
         <button class="mission mint" data-screen="sentence"><span>05</span><i>🧩</i><h3>句子拼图</h3><p>按顺序拼出陈述与问答</p><b data-done="sentence">未完成</b></button>
         <button class="mission peach" data-screen="story"><span>06</span><i>📖</i><h3>英雄一家</h3><p>听读短文，理解人物职业</p><b data-done="story">未完成</b></button>
@@ -51,7 +51,36 @@
 
     <section id="jobs" class="screen game-screen"><div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 02</span><h2>听音找职业</h2></div><span class="mini-reward">👑 <b id="jobsCrowns">0</b></span></div><div class="quiz card"><div class="quiz-top"><span>听职业名称，选择正确人物</span><b id="jobsRound">1 / 10</b></div><button id="jobsSpeak" class="listen">🔊<small>再听一次</small></button><div id="jobsChoices" class="picture-grid"></div></div></section>
 
-    <section id="grammar" class="screen game-screen"><div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 03</span><h2>He or She?</h2></div><span class="mini-reward">👑 <b id="grammarCrowns">0</b></span></div><div class="grammar-rule card"><div>👨<b>He's a pilot.</b><small>He is → He's</small></div><i>↔</i><div>👩<b>She's a doctor.</b><small>She is → She's</small></div></div><div class="quiz card"><div class="quiz-top"><span id="grammarMode">选择正确的句子</span><b id="grammarRound">1 / 10</b></div><div id="grammarPerson" class="person-scene"></div><h3 id="grammarQuestion"></h3><button id="grammarSpeak" class="listen-line">🔊 听问题</button><div id="grammarChoices" class="answer-grid"></div></div></section>
+    <section id="grammar" class="screen game-screen">
+      <div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 03</span><h2>告诉，还是提问？</h2></div><span class="mini-reward">👑 <b id="grammarCrowns">0</b></span></div>
+
+      <div id="patternVideo" class="pattern-video card">
+        <div class="video-top"><span>🎬 句型魔法小视频</span><b id="patternTime">0:00 / 0:40</b></div>
+        <div class="video-stage">
+          <div class="pattern-scene active" data-scene="0"><div class="scene-elsa"><img src="elsa-cartoon.jpg" alt="卡通 Elsa"><span>✨</span></div><h3>一句话，有两种任务</h3><div class="task-pills"><b>📣 告诉别人</b><b>❓ 问别人</b></div><p>今天只学一个小魔法。</p></div>
+          <div class="pattern-scene" data-scene="1"><div class="scene-role tell">📣 我知道答案，我来告诉你</div><div class="sentence-board statement"><span>She</span><strong>is</strong><span>a teacher</span><i>.</i></div><h3>She is a teacher.</h3><p>她是一名老师。<b>这是在告诉别人一个信息。</b></p></div>
+          <div class="pattern-scene" data-scene="2"><div class="scene-role ask">❓ 我不知道答案，我来问你</div><div class="sentence-board question"><strong>Is</strong><span>she</span><span>a teacher</span><i>?</i></div><h3>Is she a teacher?</h3><p>她是一名老师吗？<b>这是在向别人提问。</b></p></div>
+          <div class="pattern-scene" data-scene="3"><div class="magic-title">看！只做两个小动作</div><div class="magic-rows"><div><span>She</span><strong class="is-word">is</strong><span>a teacher</span><i>.</i><small>告诉</small></div><b class="magic-arrow">↓ is 搬到最前面 ↓</b><div class="after"><strong class="is-word">Is</strong><span>she</span><span>a teacher</span><i>?</i><small>提问</small></div></div><p><b>人物在前＝告诉；Is 在前＝提问。</b></p></div>
+          <div class="pattern-scene" data-scene="4"><div class="transfer-grid"><div><span>👨‍⚕️</span><b>He is a doctor.</b><small>他是一名医生。<em>告诉</em></small></div><div><span>🤔</span><b>Is he a doctor?</b><small>他是一名医生吗？<em>提问</em></small></div></div><p>换成 <b>he</b>，这个魔法也完全一样！</p></div>
+          <div class="pattern-scene" data-scene="5"><div class="rule-card"><span>🪄</span><h3>一句口诀</h3><b>人物在前是告诉<br>Is 在前是提问</b></div><p>小视频看完了，现在只做两道题。</p></div>
+        </div>
+        <div class="video-progress"><i id="patternProgress"></i></div>
+        <div id="patternDots" class="video-dots"><b class="active"></b><b></b><b></b><b></b><b></b><b></b></div>
+        <div class="video-controls"><button id="patternPlayBtn" class="primary">▶ 播放 40 秒小视频</button><button id="patternReplayBtn" class="secondary hidden">↻ 再看一遍</button></div>
+      </div>
+
+      <div id="patternPractice" class="pattern-practice card hidden">
+        <div class="practice-head"><span>看完就练 · 只有 2 题</span><b id="patternQuestionCount">第 1 题 / 2</b></div>
+        <div id="patternQuestion" class="pattern-question"></div>
+        <div id="patternChoices" class="pattern-choices"></div>
+        <div id="patternAnswerHelp" class="pattern-answer-help hidden"></div>
+        <button id="patternNextBtn" class="primary hidden">下一题 →</button>
+      </div>
+
+      <div id="patternComplete" class="pattern-complete card hidden"><span>👑</span><div><h3>你已经会举一反三了！</h3><p><b>She is… / He is…</b> 是告诉；<b>Is she…? / Is he…?</b> 是提问。</p></div><div class="pattern-complete-actions"><button class="secondary" data-screen="home">先回地图</button><button id="startGrammarDrill" class="primary">可选：再练 10 题 →</button></div></div>
+
+      <div id="grammarDrill" class="hidden"><div class="grammar-rule card"><div>👨<b>He's a pilot.</b><small>He is → He's</small></div><i>↔</i><div>👩<b>She's a doctor.</b><small>She is → She's</small></div></div><div class="quiz card"><div class="quiz-top"><span id="grammarMode">选择正确的句子</span><b id="grammarRound">1 / 10</b></div><div id="grammarPerson" class="person-scene"></div><h3 id="grammarQuestion"></h3><button id="grammarSpeak" class="listen-line">🔊 听问题</button><div id="grammarChoices" class="answer-grid"></div></div></div>
+    </section>
 
     <section id="spelling" class="screen game-screen"><div class="screen-head"><button class="back" data-screen="home">← 地图</button><div><span>STATION 04</span><h2>拼写工坊</h2></div><span class="mini-reward">👑 <b id="spellingCrowns">0</b></span></div><div class="quiz card"><div class="quiz-top"><span>看图补全职业单词</span><b id="spellingRound">1 / 10</b></div><div id="spellingEmoji" class="person-scene">🧑‍🏫</div><div id="spellingPattern" class="letter-pattern">t _ a c h e r</div><button id="spellingSpeak" class="listen-line">🔊 听单词</button><div id="spellingChoices" class="letter-choices"></div><button id="spellingExplain" class="hint-btn">💡 拼写提示</button><div id="spellingHint" class="explain-box hidden"></div></div></section>
 
@@ -80,6 +109,10 @@
   <script src="unit4-audio-5.js?v=mobile-sound-20261104"></script>
   <script src="unit4-audio-6.js?v=mobile-sound-20261104"></script>
   <script src="unit4-audio-7.js?v=mobile-sound-20261104"></script>
-  <script src="unit4.js?v=mobile-sound-20261104"></script>
+  <script src="unit4-pattern-audio-1.js?v=pattern-video-20261109"></script>
+  <script src="unit4-pattern-audio-2.js?v=pattern-video-20261109"></script>
+  <script src="unit4-pattern-audio-3.js?v=pattern-video-20261109"></script>
+  <script src="unit4-pattern-audio-4.js?v=pattern-video-20261109"></script>
+  <script src="unit4.js?v=pattern-video-20261109"></script>
 </body>
 </html>
